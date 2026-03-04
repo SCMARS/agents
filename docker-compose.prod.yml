@@ -1,0 +1,16 @@
+# Production build — mirrors what deploys to Railway / Fly.io / any Docker host
+# Usage: docker compose -f docker-compose.prod.yml up --build
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_VAPI_PUBLIC_KEY: ${NEXT_PUBLIC_VAPI_PUBLIC_KEY}
+        NEXT_PUBLIC_VAPI_ASSISTANT_ID_SALES: ${NEXT_PUBLIC_VAPI_ASSISTANT_ID_SALES}
+        NEXT_PUBLIC_ELEVENLABS_AGENT_ID_SUPPORT: ${NEXT_PUBLIC_ELEVENLABS_AGENT_ID_SUPPORT}
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped

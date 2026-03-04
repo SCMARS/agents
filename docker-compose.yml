@@ -1,0 +1,16 @@
+# Local development — hot reload, no build step
+# Usage: docker compose up
+services:
+  app:
+    image: node:18-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules   # anonymous volume so container node_modules win
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=development

@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@11labs/client": "^0.2.0",
+    "@elevenlabs/client": "^0.15.0",
     "@vapi-ai/web": "^2.5.2",
     "autoprefixer": "^10.4.27",
     "next": "^14.2.35",
