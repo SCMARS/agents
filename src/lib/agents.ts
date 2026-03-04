@@ -13,7 +13,7 @@ export const agents: Agent[] = [
         LANGUAGE: "english",
         BONUS_1_SPINS: "one hundred",
         BONUS_1_GAME: "Buffalo Power",
-        BONUS_1_PROVIDER: "Playson (pronounce as \"PLAY-sun\")",
+        BONUS_1_PROVIDER: "Playson",
         BONUS_1_WAGER: "x20",
         BONUS_1_BET_AMOUNT: "zero point two",
         BONUS_1_DEPOSIT_REQUIRED: "no",
