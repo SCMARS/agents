@@ -35,18 +35,18 @@ export default function VoiceWidget({ agent }: VoiceWidgetProps) {
   const [status, setStatus] = useState<CallStatus>("idle");
   const [error, setError] = useState<string | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const vapiRef = useRef<any>(null);
+  const providerARef = useRef<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const elConvRef = useRef<any>(null);
+  const providerBRef = useRef<any>(null);
 
   const stopCall = useCallback(async () => {
-    if (vapiRef.current) {
-      vapiRef.current.stop();
-      vapiRef.current = null;
+    if (providerARef.current) {
+      providerARef.current.stop();
+      providerARef.current = null;
     }
-    if (elConvRef.current) {
-      await elConvRef.current.endSession();
-      elConvRef.current = null;
+    if (providerBRef.current) {
+      await providerBRef.current.endSession();
+      providerBRef.current = null;
     }
     setStatus("idle");
   }, []);
@@ -59,12 +59,12 @@ export default function VoiceWidget({ agent }: VoiceWidgetProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const startVapiCall = useCallback(async () => {
-    if (!agent.vapi) return;
+  const startProviderACall = useCallback(async () => {
+    if (!agent.providerA) return;
     try {
       const Vapi = (await import("@vapi-ai/web")).default;
-      const vapi = new Vapi(agent.vapi.publicKey);
-      vapiRef.current = vapi;
+      const vapi = new Vapi(agent.providerA.publicKey);
+      providerARef.current = vapi;
 
       vapi.on("call-start", () => setStatus("active"));
       vapi.on("call-end", () => setStatus("idle"));
@@ -72,35 +72,35 @@ export default function VoiceWidget({ agent }: VoiceWidgetProps) {
       vapi.on("speech-end", () => setStatus("active"));
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vapi.on("error", (e: any) => {
-        console.error("[Vapi] error:", e);
+        console.error("[VoiceProviderA] error:", e);
         setError("Connection error. Please try again.");
         setStatus("idle");
       });
 
       setStatus("connecting");
-      await vapi.start(agent.vapi.assistantId);
+      await vapi.start(agent.providerA.assistantId);
     } catch (e) {
       console.error(e);
       setError("Failed to start call.");
       setStatus("idle");
     }
-  }, [agent.vapi]);
+  }, [agent.providerA]);
 
-  const startElevenLabsCall = useCallback(async () => {
-    if (!agent.elevenlabs) return;
+  const startProviderBCall = useCallback(async () => {
+    if (!agent.providerB) return;
 
-    const agentId = agent.elevenlabs.agentId;
-    console.log("[ElevenLabs] agentId:", agentId);
+    const agentId = agent.providerB.agentId;
+    console.log("[VoiceProviderB] agentId:", agentId);
 
     if (!agentId) {
-      setError("Agent ID not configured. Check NEXT_PUBLIC_ELEVENLABS_AGENT_ID_ANNA in .env.local");
+      setError("Agent ID not configured. Check provider B environment variables in .env.local");
       return;
     }
 
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch (e) {
-      console.error("[ElevenLabs] mic error:", e);
+      console.error("[VoiceProviderB] mic error:", e);
       setError("Microphone access denied. Please allow microphone in browser settings.");
       return;
     }
@@ -113,38 +113,38 @@ export default function VoiceWidget({ agent }: VoiceWidgetProps) {
       const conversation = await Conversation.startSession({
         agentId,
         connectionType: "websocket",
-        dynamicVariables: agent.elevenlabs?.dynamicVariables,
+        dynamicVariables: agent.providerB?.dynamicVariables,
         onConnect: () => {
-          console.log("[ElevenLabs] connected");
+          console.log("[VoiceProviderB] connected");
           setStatus("active");
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onDisconnect: (details: any) => {
-          console.log("[ElevenLabs] disconnected", details);
+          console.log("[VoiceProviderB] disconnected", details);
           setStatus("idle");
         },
         onError: (msg: string) => {
-          console.error("[ElevenLabs] error:", msg);
+          console.error("[VoiceProviderB] error:", msg);
           setError(`Error: ${msg}`);
           setStatus("idle");
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onModeChange: (mode: any) => {
           const m = typeof mode === "object" ? mode.mode : mode;
-          console.log("[ElevenLabs] mode:", m);
+          console.log("[VoiceProviderB] mode:", m);
           if (m === "speaking") setStatus("speaking");
           else setStatus("active");
         },
       });
 
-      elConvRef.current = conversation;
+      providerBRef.current = conversation;
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      console.error("[ElevenLabs] session error:", e);
+      console.error("[VoiceProviderB] session error:", e);
       setError(`Connection failed: ${msg}`);
       setStatus("idle");
     }
-  }, [agent.elevenlabs]);
+  }, [agent.providerB]);
 
   const handleToggle = useCallback(async () => {
     setError(null);
@@ -152,12 +152,12 @@ export default function VoiceWidget({ agent }: VoiceWidgetProps) {
       await stopCall();
       return;
     }
-    if (agent.provider === "vapi") {
-      await startVapiCall();
+    if (agent.provider === "providerA") {
+      await startProviderACall();
     } else {
-      await startElevenLabsCall();
+      await startProviderBCall();
     }
-  }, [status, agent.provider, startVapiCall, startElevenLabsCall, stopCall]);
+  }, [status, agent.provider, startProviderACall, startProviderBCall, stopCall]);
 
   const isActive = status !== "idle";
   const accent = ACCENT_COLORS[status];

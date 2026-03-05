@@ -1,13 +1,13 @@
-export type AgentProvider = "vapi" | "elevenlabs";
+export type AgentProvider = "providerA" | "providerB";
 
 export type CallStatus = "idle" | "connecting" | "active" | "speaking";
 
-export interface VapiConfig {
+export interface ProviderAConfig {
   publicKey: string;
   assistantId: string;
 }
 
-export interface ElevenLabsConfig {
+export interface ProviderBConfig {
   agentId: string;
   dynamicVariables?: Record<string, string | number | boolean>;
 }
@@ -18,8 +18,8 @@ export interface Agent {
   description: string;
   avatar?: string;
   provider: AgentProvider;
-  vapi?: VapiConfig;
-  elevenlabs?: ElevenLabsConfig;
+  providerA?: ProviderAConfig;
+  providerB?: ProviderBConfig;
   accentColor?: string;
   tags?: string[];
 }

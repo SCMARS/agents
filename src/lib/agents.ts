@@ -5,9 +5,9 @@ export const agents: Agent[] = [
     id: "anna-australia",
     name: "Anna Australia",
     description: "AI voice agent for Goldenreels promos.",
-    provider: "elevenlabs",
-    elevenlabs: {
-      agentId: process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_ANNA ?? "",
+    provider: "providerB",
+    providerB: {
+      agentId: process.env.NEXT_PUBLIC_PROVIDER_B_AGENT_ID_ANNA ?? "",
       dynamicVariables: {
         PLATFORM_NAME: "Goldenreels",
         LANGUAGE: "english",
@@ -37,10 +37,10 @@ export const agents: Agent[] = [
     id: "uzbek-bot",
     name: "Uzbek Bot",
     description: "AI voice agent speaking Uzbek.",
-    provider: "vapi",
-    vapi: {
-      publicKey: process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY ?? "",
-      assistantId: process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID_UZ ?? "",
+    provider: "providerA",
+    providerA: {
+      publicKey: process.env.NEXT_PUBLIC_PROVIDER_A_PUBLIC_KEY ?? "",
+      assistantId: process.env.NEXT_PUBLIC_PROVIDER_A_ASSISTANT_ID_UZ ?? "",
     },
     tags: ["uzbek"],
   },
