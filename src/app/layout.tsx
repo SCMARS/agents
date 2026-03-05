@@ -9,7 +9,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "AI Voice Agents",
-  description: "Talk to AI voice agents powered by Vapi and ElevenLabs",
+  description: "Talk to responsive AI voice agents in your browser",
 };
 
 export default function RootLayout({

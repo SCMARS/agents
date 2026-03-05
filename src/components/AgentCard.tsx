@@ -7,13 +7,8 @@ interface AgentCardProps {
   agent: Agent;
 }
 
-const PROVIDER_COLORS: Record<string, string> = {
-  vapi: "#22d3ee",
-  elevenlabs: "#a855f7",
-};
-
 export default function AgentCard({ agent }: AgentCardProps) {
-  const accent = PROVIDER_COLORS[agent.provider] ?? "#22d3ee";
+  const accent = agent.accentColor ?? "#22d3ee";
 
   return (
     <Link href={`/agents/${agent.id}`} className="block group">
