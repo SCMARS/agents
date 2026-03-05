@@ -61,6 +61,10 @@ export default function VoiceWidget({ agent }: VoiceWidgetProps) {
 
   const startProviderACall = useCallback(async () => {
     if (!agent.providerA) return;
+    if (!agent.providerA.publicKey || !agent.providerA.assistantId) {
+      setError("Voice agent is not configured. Please check provider A keys.");
+      return;
+    }
     try {
       const Vapi = (await import("@vapi-ai/web")).default;
       const vapi = new Vapi(agent.providerA.publicKey);
